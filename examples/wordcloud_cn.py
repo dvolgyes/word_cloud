@@ -58,7 +58,7 @@ def jieba_processing_txt(text):
         f_stop_seg_list = f_stop_text.splitlines()
 
     for myword in liststr.split('/'):
-        if not (myword.strip() in f_stop_seg_list) and len(myword.strip()) > 1:
+        if myword.strip() not in f_stop_seg_list and len(myword.strip()) > 1:
             mywordlist.append(myword)
     return ' '.join(mywordlist)
 
