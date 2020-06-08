@@ -216,6 +216,8 @@ def make_parser():
     parser.add_argument(
         '--version', action='version',
         version='%(prog)s {version}'.format(version=__version__))
+    parser.add_argument('--weightedwords' , default=False , action='store_true' ,
+        help = 'add to indicate that text file has (word , weight) pairs each in a line')
     return parser
 
 

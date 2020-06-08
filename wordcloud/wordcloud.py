@@ -29,6 +29,7 @@ from PIL import ImageFont
 
 from .query_integral_image import query_integral_image
 from .tokenization import unigrams_and_bigrams, process_tokens
+import csv
 
 FILE = os.path.dirname(__file__)
 FONT_PATH = os.environ.get('FONT_PATH', os.path.join(FILE, 'DroidSansMono.ttf'))
@@ -312,7 +313,8 @@ class WordCloud(object):
                  relative_scaling='auto', regexp=None, collocations=True,
                  colormap=None, normalize_plurals=True, contour_width=0,
                  contour_color='black', repeat=False,
-                 include_numbers=False, min_word_length=0, collocation_threshold=30):
+                 include_numbers=False, min_word_length=0, collocation_threshold=30,
+                 weightedwords=False):
         if font_path is None:
             font_path = FONT_PATH
         if color_func is None and colormap is None:
@@ -364,6 +366,7 @@ class WordCloud(object):
         self.include_numbers = include_numbers
         self.min_word_length = min_word_length
         self.collocation_threshold = collocation_threshold
+        self.weightedwords = weightedwords
 
     def fit_words(self, frequencies):
         """Create a word_cloud from words and frequencies.
@@ -609,7 +612,17 @@ class WordCloud(object):
         -------
         self
         """
-        words = self.process_text(text)
+        words = dict()
+        if not self.weightedwords:
+            words = self.process_text(text)
+        else :
+            for row in csv.reader(text.split('\n')):
+                if row:
+                    if len(row) == 1:
+                        words[row[0]] = 1.
+                    else:
+                        words[row[0]] = float(row[1])
+
         self.generate_from_frequencies(words)
         return self
 
