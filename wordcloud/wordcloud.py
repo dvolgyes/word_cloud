@@ -343,7 +343,11 @@ class WordCloud(object):
         if isinstance(random_state, int):
             random_state = Random(random_state)
         self.random_state = random_state
-        self.background_color = background_color
+        if mode == 'RGB':
+            self.background_color = background_color
+        else:
+            self.background_color = (255,255,255,0)
+
         self.max_font_size = max_font_size
         self.mode = mode
 
@@ -1036,7 +1040,10 @@ class WordCloud(object):
         contour = Image.fromarray(contour)
         contour = contour.filter(ImageFilter.GaussianBlur(radius=radius))
         contour = np.array(contour) > 0
-        contour = np.dstack((contour, contour, contour))
+        if self.mode=='RGB':
+            contour = np.dstack((contour, contour, contour))
+        else:
+            contour = np.dstack((contour, contour, contour, contour))
 
         # color the contour
         ret = np.array(img) * np.invert(contour)
