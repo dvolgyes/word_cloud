@@ -40,7 +40,10 @@ def unigrams_and_bigrams(words, stopwords, normalize_plurals=True, collocation_t
     # We must create the bigrams before removing the stopword tokens from the words, or else we get bigrams like
     # "thank much" from "thank you very much".
     # We don't allow any of the words in the bigram to be stopwords
-    bigrams = list(p for p in pairwise(words) if not any(w.lower() in stopwords for w in p))
+    bigrams = [
+        p for p in pairwise(words) if all(w.lower() not in stopwords for w in p)
+    ]
+
     n_words = len(words)
     counts_unigrams, standard_form = process_tokens(
         words, normalize_plurals=normalize_plurals)

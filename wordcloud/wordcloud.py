@@ -319,10 +319,7 @@ class WordCloud(object):
             font_path = FONT_PATH
         if color_func is None and colormap is None:
             version = matplotlib.__version__
-            if version[0] < "2" and version[2] < "5":
-                colormap = "hsv"
-            else:
-                colormap = "viridis"
+            colormap = "hsv" if version[0] < "2" and version[2] < "5" else "viridis"
         self.colormap = colormap
         self.collocations = collocations
         self.font_path = font_path
@@ -352,11 +349,7 @@ class WordCloud(object):
         self.mode = mode
 
         if relative_scaling == "auto":
-            if repeat:
-                relative_scaling = 0
-            else:
-                relative_scaling = .5
-
+            relative_scaling = 0 if repeat else .5
         if relative_scaling < 0 or relative_scaling > 1:
             raise ValueError("relative_scaling needs to be "
                              "between 0 and 1, got %f." % relative_scaling)
@@ -388,7 +381,7 @@ class WordCloud(object):
         """
         return self.generate_from_frequencies(frequencies)
 
-    def generate_from_frequencies(self, frequencies, max_font_size=None):  # noqa: C901
+    def generate_from_frequencies(self, frequencies, max_font_size=None):    # noqa: C901
         """Create a word_cloud from words and frequencies.
 
         Parameters
@@ -417,11 +410,7 @@ class WordCloud(object):
         frequencies = [(word, freq / max_frequency)
                        for word, freq in frequencies]
 
-        if self.random_state is not None:
-            random_state = self.random_state
-        else:
-            random_state = Random()
-
+        random_state = self.random_state if self.random_state is not None else Random()
         if self.mask is not None:
             boolean_mask = self._get_bolean_mask(self.mask)
             width = self.mask.shape[1]
@@ -589,7 +578,7 @@ class WordCloud(object):
         if self.min_word_length:
             words = [word for word in words if len(word) >= self.min_word_length]
 
-        stopwords = set([i.lower() for i in self.stopwords])
+        stopwords = {i.lower() for i in self.stopwords}
         if self.collocations:
             word_counts = unigrams_and_bigrams(words, stopwords, self.normalize_plurals, self.collocation_threshold)
         else:

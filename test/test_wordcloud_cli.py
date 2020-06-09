@@ -55,8 +55,7 @@ ARGUMENT_CLI_NAMES_UNARY = [arg_opt.cli_name for arg_opt in ARGUMENT_SPEC_UNARY]
 
 
 def all_arguments():
-    arguments = []
-    arguments.extend(ARGUMENT_SPEC_TYPED)
+    arguments = list(ARGUMENT_SPEC_TYPED)
     arguments.extend(ARGUMENT_SPEC_UNARY)
     arguments.extend(ARGUMENT_SPEC_REMAINING)
     return arguments
@@ -70,9 +69,9 @@ def test_main_passes_arguments_through(tmpdir):
     for option in all_arguments():
         setattr(args, option.init_name, option.pass_value)
 
-    text = 'some long text'
     image_file = open(image_filepath, 'w')
     with patch('wordcloud.wordcloud_cli.wc.WordCloud', autospec=True) as mock_word_cloud:
+        text = 'some long text'
         cli.main(vars(args), text, image_file)
 
     posargs, kwargs = mock_word_cloud.call_args
@@ -101,7 +100,7 @@ def test_parse_args_are_passed_along(option, tmpdir, tmp_text_file):
         check_argument_unary(str(tmp_text_file), option.cli_name, option.init_name)
     elif option.cli_name != 'mask':
         pass_value = option.pass_value
-        if isinstance(option.pass_value, PassFile):
+        if isinstance(pass_value, PassFile):
             input_file = tmpdir.join("%s_file" % option.cli_name)
             input_file.write(b"")
             pass_value = str(input_file)
